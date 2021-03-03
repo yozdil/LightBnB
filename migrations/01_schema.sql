@@ -16,12 +16,12 @@ CREATE TABLE properties (
 
   title VARCHAR(255) NOT NULL,
   description TEXT,
-  photo_thumbnail VARCHAR(255) NOT NULL,
-  photo_cover VARCHAR(255) NOT NULL,
+  thumbnail_photo_url VARCHAR(255) NOT NULL,
+  cover_photo_url VARCHAR(255) NOT NULL,
   cost_per_night INTEGER NOT NULL DEFAULT 0,
   parking_spaces INTEGER NOT NULL DEFAULT 0,
-  num_of_bathrooms INTEGER NOT NULL DEFAULT 0,
-  num_of_bedrooms INTEGER NOT NULL DEFAULT 0,
+  number_of_bathrooms INTEGER NOT NULL DEFAULT 0,
+  number_of_bedrooms INTEGER NOT NULL DEFAULT 0,
 
   country VARCHAR(255) NOT NULL,
   street VARCHAR(255) NOT NULL,
@@ -33,18 +33,18 @@ CREATE TABLE properties (
 
 CREATE TABLE reservations (
   id SERIAL PRIMARY KEY NOT NULL,
-  guest_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  property_id INTEGER REFERENCES properties(id) ON DELETE CASCADE,
   start_date DATE NOT NULL,
-  end_date DATE NOT NULL
+  end_date DATE NOT NULL,
+  property_id INTEGER REFERENCES properties(id) ON DELETE CASCADE,
+  guest_id INTEGER REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE property_reviews (
   id SERIAL PRIMARY KEY NOT NULL,
   guest_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-  reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
   property_id INTEGER REFERENCES properties(id) ON DELETE CASCADE,
-  message TEXT,
-  rating SMALLINT  NOT NULL DEFAULT 0
+  reservation_id INTEGER REFERENCES reservations(id) ON DELETE CASCADE,
+  rating SMALLINT  NOT NULL DEFAULT 0,
+  message TEXT
 );
 
