@@ -81,9 +81,9 @@ WHERE name = $1
       [user.name]
     )
     .then((res) => {
-      console.log('new user registered:', res.rows);
+      console.log("new user registered:", res.rows);
       if (res.rows) {
-        return res.rows[0]
+        return res.rows[0];
       } else {
         return null;
       }
@@ -99,7 +99,27 @@ exports.addUser = addUser;
  * @return {Promise<[{}]>} A promise to the reservations.
  */
 const getAllReservations = function (guest_id, limit = 10) {
-  return getAllProperties(null, 2);
+  return pool
+    .query(
+      `
+SELECT reservations.*, properties.*, avg(property_reviews.rating) FROM properties
+JOIN reservations ON reservations.property_id = properties.id
+JOIN property_reviews ON property_reviews.property_id = properties.id
+JOIN users ON users.id = properties.owner_id
+WHERE properties.owner_id = $1
+GROUP BY reservations.id, properties.id
+HAVING reservations.end_date < now()::date
+ORDER BY reservations.start_date
+LIMIT $2;
+`[(guest_id, limit)]
+    )
+    .then((res) => {
+      if (res.rows) {
+        return res.rows;
+      } else {
+        return null;
+      }
+    });
 };
 exports.getAllReservations = getAllReservations;
 
